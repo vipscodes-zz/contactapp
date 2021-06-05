@@ -1,4 +1,4 @@
-const {question, saveContact} = require('./contacts')
+const {saveContact, listContact, detailContact, deleteContact} = require('./contacts')
 
 
 
@@ -41,6 +41,46 @@ yargs.command({
     handler(argv) {
         saveContact(argv.name, argv.email)
     }
+}).demandCommand()
+
+//show all data
+yargs.command({
+    command: 'list',
+    describe: 'Show all contact',
+    handler() {
+        listContact()
+    }
 })
 
+//detail
+yargs.command({
+    command: 'detail',
+    describe: 'Show detail by name',
+    builder: {
+        name: {
+            describe: 'fullname',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        detailContact(argv.name)
+    }
+})
+
+//delete
+yargs.command({
+    command: 'delete',
+    describe: 'Delete contact by name',
+    builder: {
+        name: {
+            describe: 'fullname',
+            demandOption: true,
+            type: 'string',
+        },
+    },
+    handler(argv) {
+        deleteContact(argv.name)
+    }
+})
 yargs.parse()

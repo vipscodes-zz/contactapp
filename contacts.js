@@ -50,10 +50,15 @@ if(!fs.existsSync(dataPath)) {
 //     })
 // }
 
-const saveContact = (name, email) => {
-    const contact = {name, email}
+const loadContact = () => {
     const file = fs.readFileSync('data/contacts.json', 'utf-8')
     const contacts = JSON.parse(file)
+    return contacts
+}
+
+const saveContact = (name, email) => {
+    const contact = {name, email}
+    const contacts = loadContact()
     
     
     // check existing contacts
@@ -80,6 +85,45 @@ const saveContact = (name, email) => {
         })
 }
 
+const listContact = () => {
+    const contacts = loadContact()
+    console.log(chalk.cyan.inverse.bold('Contact List'))
+    contacts.forEach((contact, i) => {
+        console.log(`${i + 1}. ${contact.name}`)
+    })
+}
+
+const detailContact = (name) => {
+    const contacts = loadContact()
+    console.log(chalk.cyan.inverse.bold('Detail'))
+    const contact = contacts.find((contact) => contact.name.toLowerCase() === name.toLowerCase())
+    if(!contact) {
+        console.log(chalk.red.inverse.bold("Contact Not Found"))
+        return false
+    }
+    console.log(chalk.cyan.inverse.bold(contact.name))
+    if(contact.email) {
+        console.log(chalk.cyan.inverse.bold(contact.email))
+    }
+
+}
+
+const deleteContact = (name) => {
+    const contacts = loadContact()
+    const newContacts = contacts.filter(contact => contact.name.toLowerCase() !== name.toLowerCase())
+
+    if(contacts.length === newContacts.length) {
+        console.log(chalk.red.inverse.bold("Contact Not Found"))
+        return false
+    }
+
+    fs.writeFile('data/contacts.json', JSON.stringify(newContacts), (err) => {
+        if(err) throw err
+        console.log(chalk.green.inverse.bold('Delete Contact Success'))
+    })
+
+}
+
 module.exports = {
-    saveContact
+    saveContact, listContact, detailContact, deleteContact
 }
